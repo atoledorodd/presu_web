@@ -1,0 +1,864 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarifas UGC - Anna Toledo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cafe: #3F221B;
+            --verde: #B6D545;
+            --rosa: #FFC4E1;
+            --crema: #F9F7ED;
+            --gris-claro: #F5F3ED;
+            --gris-medio: #E8E5DC;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--crema);
+            color: var(--cafe);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+            padding: 2rem;
+            min-height: 100vh;
+        }
+
+        .panel {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .panel-edicion {
+            overflow-y: auto;
+            max-height: 100vh;
+            padding-right: 1rem;
+        }
+
+        .panel-preview {
+            overflow-y: auto;
+            max-height: 100vh;
+            padding-left: 1rem;
+            border-left: 2px solid var(--gris-medio);
+            padding-right: 0;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            color: var(--verde);
+            font-size: 2rem;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: var(--cafe);
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--verde);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--cafe);
+            font-size: 1rem;
+            margin-top: 1.2rem;
+        }
+
+        .form-group {
+            margin-bottom: 1rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: var(--cafe);
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.8rem;
+            gap: 0.6rem;
+            padding: 0.6rem;
+            background: white;
+            border: 1px solid var(--gris-medio);
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        .checkbox-item:hover {
+            border-color: var(--verde);
+            background-color: var(--gris-claro);
+        }
+
+        input[type="checkbox"] {
+            cursor: pointer;
+            accent-color: var(--verde);
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+            font-weight: 500;
+        }
+
+        .checkbox-item input[type="number"] {
+            width: 70px;
+            padding: 0.4rem;
+            border: 1px solid var(--gris-medio);
+            border-radius: 4px;
+            text-align: center;
+            flex-shrink: 0;
+        }
+
+        button {
+            padding: 0.8rem 1.5rem;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 1rem;
+        }
+
+        .btn-primary {
+            background-color: var(--verde);
+            color: var(--cafe);
+        }
+
+        .btn-primary:hover {
+            background-color: #A3C42E;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--rosa);
+            color: var(--cafe);
+        }
+
+        .btn-secondary:hover {
+            background-color: #FFB0D6;
+            transform: translateY(-2px);
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.8rem;
+            margin-top: 1.5rem;
+            flex-wrap: wrap;
+        }
+
+        .btn-group button {
+            flex: 1;
+            min-width: 150px;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--gris-medio);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+        }
+
+        .contact-block {
+            background-color: var(--rosa);
+            color: var(--cafe);
+            padding: 1.5rem;
+            border-radius: 6px;
+            margin: 1.5rem 0;
+        }
+
+        .contact-block h3 {
+            margin-top: 0;
+        }
+
+        .contact-block a {
+            color: var(--cafe);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th {
+            background-color: var(--verde);
+            color: var(--cafe);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--gris-claro);
+        }
+
+        .resumen {
+            background: white;
+            border: 2px solid var(--verde);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin: 1.5rem 0;
+        }
+
+        .resumen-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.8rem 0;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        .resumen-row.total {
+            font-weight: 700;
+            font-size: 1.2rem;
+            border-top: 2px solid var(--verde);
+            border-bottom: none;
+            margin-top: 0.5rem;
+            padding-top: 1rem;
+            color: var(--verde);
+        }
+
+        .document {
+            background: white;
+            padding: 3rem 2rem;
+            border-radius: 6px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .document-header {
+            text-align: center;
+            border-bottom: 2px solid var(--verde);
+            padding-bottom: 1.5rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .document-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.3rem;
+        }
+
+        .document-header p {
+            margin: 0.3rem 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .document-section {
+            margin-bottom: 1.5rem;
+        }
+
+        .document-section h2 {
+            font-size: 1rem;
+            border: none;
+            padding: 0;
+            margin: 0.8rem 0 0.5rem 0;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        .budget-table {
+            width: 100%;
+            margin: 1rem 0;
+            font-size: 0.9rem;
+        }
+
+        .budget-table th {
+            background-color: var(--verde);
+            color: var(--cafe);
+            padding: 0.7rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .budget-table td {
+            padding: 0.6rem 0.7rem;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        .budget-table tr:nth-child(even) {
+            background-color: var(--gris-claro);
+        }
+
+        .budget-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.5rem 0;
+            border-bottom: 1px solid var(--gris-medio);
+            font-size: 0.9rem;
+        }
+
+        .budget-row.total {
+            font-weight: 600;
+            font-size: 1rem;
+            border-top: 2px solid var(--verde);
+            margin-top: 0.8rem;
+            padding-top: 0.8rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .message.success {
+            background-color: #D4EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+        }
+
+        @media (max-width: 1024px) {
+            .container {
+                grid-template-columns: 1fr;
+                gap: 1.5rem;
+            }
+
+            .panel-preview {
+                border-left: none;
+                border-top: 2px solid var(--gris-medio);
+                padding-left: 0;
+                padding-top: 1rem;
+            }
+
+            .panel-edicion {
+                padding-right: 0;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                display: block;
+                padding: 0;
+            }
+
+            .panel-edicion {
+                display: none;
+            }
+
+            .panel-preview {
+                border: none;
+                padding: 0;
+                overflow: visible;
+                max-height: none;
+            }
+
+            .document {
+                box-shadow: none;
+                padding: 2rem;
+                page-break-after: always;
+            }
+
+            button, .btn-group {
+                display: none !important;
+            }
+
+            @page {
+                size: A4;
+                margin: 1cm;
+            }
+        }
+
+        .empty-state {
+            text-align: center;
+            color: #999;
+            padding: 2rem 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ============ PANEL IZQUIERDO: SELECCIÓN ============ -->
+        <div class="panel panel-edicion">
+            <h1>💰 Tarifas UGC</h1>
+            <p style="font-size: 0.95rem; color: #666; margin-bottom: 1.5rem;">Selecciona los servicios que necesitas y te mostraremos un estimado.</p>
+
+            <div id="mensaje"></div>
+
+            <div class="contact-block">
+                <h3>👋 ¿Quién soy?</h3>
+                <p style="margin: 0.5rem 0; font-size: 0.95rem;">
+                    Soy Anna Toledo, creadora de contenido especializada en UGC y colaboraciones. Formación en Comunicación Audiovisual.
+                </p>
+            </div>
+
+            <h2>Tu Información</h2>
+            <div class="form-group">
+                <label for="cliente-nombre">Nombre / Empresa (opcional)</label>
+                <input type="text" id="cliente-nombre" placeholder="Para personalizar el estimado">
+            </div>
+
+            <div class="form-group">
+                <label for="cliente-email">Email (opcional)</label>
+                <input type="email" id="cliente-email" placeholder="Para que te contacte si hay dudas">
+            </div>
+
+            <div class="form-group">
+                <label for="cliente-telefono">Teléfono (opcional)</label>
+                <input type="tel" id="cliente-telefono" placeholder="Contacto directo">
+            </div>
+
+            <h2>UGC</h2>
+            <div id="entregables-ugc"></div>
+
+            <h2>Colaboraciones en mi Perfil</h2>
+            <div id="entregables-colabs"></div>
+
+            <h2>Extras</h2>
+            <div id="extras"></div>
+
+            <h2>Licencia de Uso</h2>
+            <div class="form-group">
+                <label for="licencia">Selecciona cómo usarás el contenido</label>
+                <select id="licencia" style="width: 100%; padding: 0.7rem; border: 1px solid var(--gris-medio); border-radius: 4px; font-family: Poppins; cursor: pointer;">
+                    <option value="">-- Elegir --</option>
+                </select>
+            </div>
+
+            <h2>Exclusividad</h2>
+            <div class="form-group">
+                <label for="exclusividad">¿Quieres contenido exclusivo?</label>
+                <select id="exclusividad" style="width: 100%; padding: 0.7rem; border: 1px solid var(--gris-medio); border-radius: 4px; font-family: Poppins; cursor: pointer;">
+                    <option value="">-- Elegir --</option>
+                </select>
+            </div>
+
+            <h2>Detalles del Proyecto</h2>
+            <div class="form-group">
+                <label for="proyecto-brief">Briefing / Descripción del proyecto (opcional)</label>
+                <textarea id="proyecto-brief" placeholder="Ej: Buscamos 3 vídeos de testimonio para anuncios en Instagram, enfoque lifestyle, tono desenfadado..." style="width: 100%; padding: 0.7rem; border: 1px solid var(--gris-medio); border-radius: 4px; font-family: Poppins; min-height: 80px;"></textarea>
+            </div>
+
+            <div class="form-group">
+                <label for="proyecto-timeline">Timeline / Deadline (opcional)</label>
+                <input type="text" id="proyecto-timeline" placeholder="Ej: Necesito todo en 2 semanas" style="width: 100%; padding: 0.7rem; border: 1px solid var(--gris-medio); border-radius: 4px; font-family: Poppins;">
+            </div>
+
+            <div class="form-group">
+                <label for="proyecto-presupuesto">¿Tienes presupuesto aproximado? (opcional)</label>
+                <input type="text" id="proyecto-presupuesto" placeholder="Ej: 500-800 € aprox" style="width: 100%; padding: 0.7rem; border: 1px solid var(--gris-medio); border-radius: 4px; font-family: Poppins;">
+            </div>
+
+            <div class="form-group">
+                <label for="proyecto-notas">Notas adicionales (opcional)</label>
+                <textarea id="proyecto-notas" placeholder="Ej: Preferimos estilo más formal, contamos con producto para grabar, se permite poner nuestro logo..." style="width: 100%; padding: 0.7rem; border: 1px solid var(--gris-medio); border-radius: 4px; font-family: Poppins; min-height: 80px;"></textarea>
+            </div>
+
+            <div class="btn-group" style="margin-top: 2rem;">
+                <button class="btn-primary" onclick="app.descargarPDF()">🖨️ Descargar Estimado</button>
+                <button class="btn-secondary" onclick="app.contactar()">✉️ Contactar</button>
+            </div>
+
+            <div class="contact-block">
+                <p style="margin: 0; font-size: 0.9rem;">
+                    <strong>💡 Nota:</strong> Este es un estimado basado en tarifas estándar. Si necesitas algo más personalizado, nos ponemos en contacto y ajustamos el presupuesto según tus necesidades reales.
+                </p>
+            </div>
+        </div>
+
+        <!-- ============ PANEL DERECHO: VISTA PREVIA ============ -->
+        <div class="panel panel-preview">
+            <h2 style="margin-top: 0;">Estimado</h2>
+            <div id="resumen-rapido"></div>
+            <div id="documento-preview"></div>
+        </div>
+    </div>
+
+    <script>
+        const CONFIG = {
+            UGC: {
+                'Vídeo testimonio 15-30 s': 100,
+                'Vídeo guionizado 30-60 s': 180,
+                'Pack 3 vídeos guionizados': 450,
+                'Pack 5 vídeos guionizados': 700,
+            },
+            COLABS: {
+                'Reel': 80,
+                'Carrusel/Post': 50,
+                'Set de 3 stories': 30,
+                'Story suelta': 15,
+            },
+            EXTRAS: {
+                'Hook alternativo': 25,
+                'Set de fotos 5-10': 100,
+                'Solo voz en off': 50,
+                'Material en bruto': 30,
+                'Formato adicional 1:1 o 16:9': 25,
+                'Revisión adicional (3ª en adelante)': 30,
+                'Entrega urgente (<72h)': 25,
+            },
+            EXTRAS_TIPOS: {
+                'Entrega urgente (<72h)': 'porcentaje',
+            },
+            LICENCIAS: {
+                'Orgánico 90 días': 0,
+                'Anuncios 30 días': 30,
+                'Anuncios 90 días': 50,
+                'Anuncios 12 meses': 100,
+                'Web/E-commerce/Email 12 meses': 25,
+                'Whitelisting/Spark Ads': 50,
+                'Ilimitado': 150,
+            },
+            EXCLUSIVIDAD: {
+                'Sin exclusividad': 0,
+                '1 mes': 25,
+                '3 meses': 50,
+                '6 meses': 100,
+                '12 meses': 175,
+            },
+            IVA: 0.21,
+        };
+
+        const CONTACTO = {
+            nombre: 'Anna Toledo',
+            email: 'anna.tol.rod@gmail.com',
+            instagram: '@by.annatoledo',
+            web: 'annatoledo.es',
+        };
+
+        const app = {
+            presupuesto: null,
+
+            init() {
+                this.renderizarControles();
+                this.asignarEventos();
+                this.mostrarVista();
+            },
+
+            renderizarControles() {
+                // UGC
+                const ugcDiv = document.getElementById('entregables-ugc');
+                ugcDiv.innerHTML = '';
+                Object.entries(CONFIG.UGC).forEach(([nombre, precio]) => {
+                    const id = `ugc_${nombre.replace(/\s+/g, '_')}`;
+                    ugcDiv.innerHTML += `
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="${id}" class="entregable-ugc" data-nombre="${nombre}" data-precio="${precio}">
+                            <label for="${id}">${nombre}</label>
+                            <span style="font-weight: 600; color: var(--verde);">${this.formatearPrecio(precio)}</span>
+                            <input type="number" value="1" min="1" class="cantidad-ugc" data-nombre="${nombre}">
+                        </div>
+                    `;
+                });
+
+                // Colabs
+                const colabsDiv = document.getElementById('entregables-colabs');
+                colabsDiv.innerHTML = '';
+                Object.entries(CONFIG.COLABS).forEach(([nombre, precio]) => {
+                    const id = `colab_${nombre.replace(/\s+/g, '_')}`;
+                    colabsDiv.innerHTML += `
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="${id}" class="entregable-colab" data-nombre="${nombre}" data-precio="${precio}">
+                            <label for="${id}">${nombre}</label>
+                            <span style="font-weight: 600; color: var(--verde);">${this.formatearPrecio(precio)}</span>
+                            <input type="number" value="1" min="1" class="cantidad-colab" data-nombre="${nombre}">
+                        </div>
+                    `;
+                });
+
+                // Extras
+                const extrasDiv = document.getElementById('extras');
+                extrasDiv.innerHTML = '';
+                Object.entries(CONFIG.EXTRAS).forEach(([nombre, precio]) => {
+                    const id = `extra_${nombre.replace(/\s+/g, '_')}`;
+                    const esPorc = CONFIG.EXTRAS_TIPOS[nombre] === 'porcentaje';
+                    extrasDiv.innerHTML += `
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="${id}" class="extra-item" data-nombre="${nombre}" data-precio="${precio}" data-tipo="${esPorc ? 'porcentaje' : 'fijo'}">
+                            <label for="${id}">${nombre}</label>
+                            <span style="font-weight: 600; color: var(--verde);">${esPorc ? '+' + precio + '%' : this.formatearPrecio(precio)}</span>
+                            <input type="number" value="1" min="1" class="cantidad-extra" data-nombre="${nombre}">
+                        </div>
+                    `;
+                });
+
+                // Licencias
+                const licenseSelect = document.getElementById('licencia');
+                licenseSelect.innerHTML = '<option value="">-- Elegir --</option>';
+                Object.entries(CONFIG.LICENCIAS).forEach(([nombre, porcentaje]) => {
+                    licenseSelect.innerHTML += `<option value="${nombre}">${nombre} ${porcentaje > 0 ? '+' + porcentaje + '%' : '(incluido)'}</option>`;
+                });
+
+                // Exclusividad
+                const exclSelect = document.getElementById('exclusividad');
+                exclSelect.innerHTML = '';
+                Object.entries(CONFIG.EXCLUSIVIDAD).forEach(([nombre, porcentaje]) => {
+                    exclSelect.innerHTML += `<option value="${nombre}">${nombre}${porcentaje > 0 ? ' (+' + porcentaje + '%)' : ''}</option>`;
+                });
+            },
+
+            asignarEventos() {
+                document.querySelectorAll('.entregable-ugc, .entregable-colab, .extra-item').forEach(chk => {
+                    chk.addEventListener('change', () => this.calcularYMostrar());
+                });
+                document.querySelectorAll('.cantidad-ugc, .cantidad-colab, .cantidad-extra').forEach(inp => {
+                    inp.addEventListener('change', () => this.calcularYMostrar());
+                });
+                document.getElementById('licencia').addEventListener('change', () => this.calcularYMostrar());
+                document.getElementById('exclusividad').addEventListener('change', () => this.calcularYMostrar());
+            },
+
+            calcularYMostrar() {
+                this.calcularPresupuesto();
+                this.mostrarVista();
+            },
+
+            calcularPresupuesto() {
+                const presupuesto = {
+                    lineas: [],
+                    subtotal: 0,
+                    recargoLicencia: 0,
+                    recargoExclusividad: 0,
+                    total: 0,
+                };
+
+                const lineasSinExtrasPorc = [];
+                let subtotalSinExtrasPorc = 0;
+
+                // UGC
+                document.querySelectorAll('.entregable-ugc:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-ugc').value) || 1;
+                    const subtotal = precio * cantidad;
+                    subtotalSinExtrasPorc += subtotal;
+                    lineasSinExtrasPorc.push({ nombre, precio, cantidad, subtotal, tipo: 'UGC' });
+                });
+
+                // Colabs
+                document.querySelectorAll('.entregable-colab:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-colab').value) || 1;
+                    const subtotal = precio * cantidad;
+                    subtotalSinExtrasPorc += subtotal;
+                    lineasSinExtrasPorc.push({ nombre, precio, cantidad, subtotal, tipo: 'Colaboración' });
+                });
+
+                // Extras fijos primero
+                document.querySelectorAll('.extra-item:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const tipo = chk.dataset.tipo;
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-extra').value) || 1;
+
+                    if (tipo !== 'porcentaje') {
+                        const subtotal = precio * cantidad;
+                        subtotalSinExtrasPorc += subtotal;
+                        lineasSinExtrasPorc.push({ nombre, precio, cantidad, subtotal, tipo: 'Extra' });
+                    }
+                });
+
+                presupuesto.lineas = lineasSinExtrasPorc;
+                presupuesto.subtotal = subtotalSinExtrasPorc;
+
+                // Ahora aplicar extras porcentaje sobre el total
+                document.querySelectorAll('.extra-item:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const tipo = chk.dataset.tipo;
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-extra').value) || 1;
+
+                    if (tipo === 'porcentaje') {
+                        const recargoExtra = (subtotalSinExtrasPorc * precio / 100) * cantidad;
+                        presupuesto.lineas.push({ nombre, precio, cantidad, subtotal: recargoExtra, tipo: 'Extra (%)', esPorc: true });
+                        presupuesto.subtotal += recargoExtra;
+                    }
+                });
+
+                const licencia = document.getElementById('licencia').value;
+                if (licencia && CONFIG.LICENCIAS[licencia] !== undefined) {
+                    presupuesto.recargoLicencia = presupuesto.subtotal * CONFIG.LICENCIAS[licencia] / 100;
+                }
+
+                const exclusividad = document.getElementById('exclusividad').value;
+                if (exclusividad && CONFIG.EXCLUSIVIDAD[exclusividad] !== undefined) {
+                    presupuesto.recargoExclusividad = presupuesto.subtotal * CONFIG.EXCLUSIVIDAD[exclusividad] / 100;
+                }
+
+                presupuesto.total = presupuesto.subtotal + presupuesto.recargoLicencia + presupuesto.recargoExclusividad;
+                presupuesto.iva = presupuesto.total * CONFIG.IVA;
+                presupuesto.licencia = licencia;
+                presupuesto.exclusividad = exclusividad;
+
+                this.presupuesto = presupuesto;
+            },
+
+            mostrarVista() {
+                if (!this.presupuesto || this.presupuesto.lineas.length === 0) {
+                    document.getElementById('resumen-rapido').innerHTML = '<div class="empty-state">Selecciona servicios para ver el estimado</div>';
+                    document.getElementById('documento-preview').innerHTML = '';
+                    return;
+                }
+
+                const p = this.presupuesto;
+
+                // Resumen rápido
+                let resumeHtml = '<div class="resumen">';
+                resumeHtml += '<div class="resumen-row"><span>Subtotal</span><span>' + this.formatearPrecio(p.subtotal) + '</span></div>';
+                if (p.recargoLicencia > 0) {
+                    resumeHtml += '<div class="resumen-row"><span>Recargo licencia</span><span>+' + this.formatearPrecio(p.recargoLicencia) + '</span></div>';
+                }
+                if (p.recargoExclusividad > 0) {
+                    resumeHtml += '<div class="resumen-row"><span>Recargo exclusividad</span><span>+' + this.formatearPrecio(p.recargoExclusividad) + '</span></div>';
+                }
+                resumeHtml += '<div class="resumen-row total"><span>TOTAL SIN IVA</span><span>' + this.formatearPrecio(p.total) + '</span></div>';
+                resumeHtml += '<div class="resumen-row" style="border-bottom: none; padding-top: 0.5rem;"><span style="font-size: 0.9rem; color: #999;">IVA (21%)</span><span style="font-size: 0.9rem; color: #999;">+' + this.formatearPrecio(p.iva) + '</span></div>';
+                resumeHtml += '<div class="resumen-row" style="border-bottom: none;"><span style="font-size: 0.9rem; color: #999;">Con IVA</span><span style="font-size: 0.9rem; color: #999;">' + this.formatearPrecio(p.total + p.iva) + '</span></div>';
+                resumeHtml += '</div>';
+                document.getElementById('resumen-rapido').innerHTML = resumeHtml;
+
+                // Documento
+                const clienteNombre = document.getElementById('cliente-nombre').value;
+                const clienteEmail = document.getElementById('cliente-email').value;
+                const clienteTelefono = document.getElementById('cliente-telefono').value;
+                const briefing = document.getElementById('proyecto-brief').value;
+                const timeline = document.getElementById('proyecto-timeline').value;
+                const notas = document.getElementById('proyecto-notas').value;
+                const presupuestoRef = document.getElementById('proyecto-presupuesto').value;
+
+                let docHtml = '<div class="document">';
+                docHtml += '<div class="document-header">';
+                docHtml += '<h1>Estimado de Tarifas</h1>';
+                docHtml += '<p>Anna Toledo · Creadora de Contenido UGC</p>';
+                docHtml += '<p style="font-size: 0.85rem; color: #999;">@by.annatoledo · annatoledo.es</p>';
+                docHtml += '</div>';
+
+                if (clienteNombre || clienteEmail || clienteTelefono) {
+                    docHtml += '<div class="document-section" style="background-color: var(--rosa); padding: 1rem; border-radius: 6px; margin-bottom: 1.5rem;">';
+                    docHtml += '<h2 style="margin: 0 0 0.5rem 0; border: none; font-size: 1rem;">Para</h2>';
+                    if (clienteNombre) docHtml += `<p style="margin: 0.3rem 0;"><strong>${clienteNombre}</strong></p>`;
+                    if (clienteEmail) docHtml += `<p style="margin: 0.3rem 0; font-size: 0.9rem;"><strong>Email:</strong> ${clienteEmail}</p>`;
+                    if (clienteTelefono) docHtml += `<p style="margin: 0.3rem 0; font-size: 0.9rem;"><strong>Teléfono:</strong> ${clienteTelefono}</p>`;
+                    docHtml += '</div>';
+                }
+
+                if (briefing) {
+                    docHtml += '<div class="document-section">';
+                    docHtml += '<h2>Tu Proyecto</h2>';
+                    docHtml += `<p style="font-size: 0.9rem; line-height: 1.6;">${briefing.replace(/\n/g, '<br>')}</p>`;
+                    docHtml += '</div>';
+                }
+
+                docHtml += '<div class="document-section">';
+                docHtml += '<h2>Desglose de Tarifas</h2>';
+                docHtml += '<table class="budget-table"><thead><tr><th>Servicio</th><th style="text-align: right;">Cantidad</th><th style="text-align: right;">Precio</th><th style="text-align: right;">Subtotal</th></tr></thead><tbody>';
+                p.lineas.forEach(l => {
+                    const precioUnit = l.esPorc ? `+${l.precio}%` : this.formatearPrecio(l.precio);
+                    docHtml += `<tr><td>${l.nombre}</td><td style="text-align: right;">${l.cantidad}</td><td style="text-align: right;">${precioUnit}</td><td style="text-align: right; font-weight: 500;">${this.formatearPrecio(l.subtotal)}</td></tr>`;
+                });
+                docHtml += '</tbody></table>';
+
+                docHtml += '<div style="margin-top: 1.5rem;">';
+                docHtml += '<div class="budget-row"><span>Subtotal</span><span>' + this.formatearPrecio(p.subtotal) + '</span></div>';
+                if (p.recargoLicencia > 0) {
+                    docHtml += '<div class="budget-row"><span>Recargo ' + p.licencia.toLowerCase() + '</span><span>+' + this.formatearPrecio(p.recargoLicencia) + '</span></div>';
+                }
+                if (p.recargoExclusividad > 0) {
+                    docHtml += '<div class="budget-row"><span>Recargo ' + p.exclusividad.toLowerCase() + '</span><span>+' + this.formatearPrecio(p.recargoExclusividad) + '</span></div>';
+                }
+                docHtml += '<div class="budget-row total"><span>TOTAL SIN IVA</span><span>' + this.formatearPrecio(p.total) + '</span></div>';
+                docHtml += '</div>';
+                docHtml += '</div>';
+
+                if (timeline || presupuestoRef) {
+                    docHtml += '<div class="document-section">';
+                    if (timeline) docHtml += `<p style="font-size: 0.9rem;"><strong>Timeline:</strong> ${timeline}</p>`;
+                    if (presupuestoRef) docHtml += `<p style="font-size: 0.9rem;"><strong>Presupuesto referencia:</strong> ${presupuestoRef}</p>`;
+                    docHtml += '</div>';
+                }
+
+                if (notas) {
+                    docHtml += '<div class="document-section">';
+                    docHtml += '<h2>Notas del Proyecto</h2>';
+                    docHtml += `<p style="font-size: 0.9rem; line-height: 1.6;">${notas.replace(/\n/g, '<br>')}</p>`;
+                    docHtml += '</div>';
+                }
+
+                docHtml += '<div class="document-section" style="background-color: var(--rosa); padding: 1.5rem; border-radius: 6px; border: 2px solid var(--verde);">';
+                docHtml += '<h2 style="margin-top: 0; border: none; padding: 0; font-size: 1rem;">📌 Estimador Orientativo</h2>';
+                docHtml += '<p style="margin: 0.8rem 0; font-size: 0.9rem;">Este es un estimado basado en tarifas estándar. Si necesitas ajustes específicos (alcance adicional, timeline urgente, cambios en el briefing), <strong>contacta conmigo</strong> para un presupuesto personalizado.</p>';
+                docHtml += '</div>';
+
+                docHtml += '</div>';
+                document.getElementById('documento-preview').innerHTML = docHtml;
+            },
+
+            descargarPDF() {
+                if (!this.presupuesto || this.presupuesto.lineas.length === 0) {
+                    this.mostrarMensaje('Selecciona servicios primero', 'error');
+                    return;
+                }
+                window.print();
+            },
+
+            contactar() {
+                const clienteNombre = document.getElementById('cliente-nombre').value;
+                const clienteEmail = document.getElementById('cliente-email').value;
+                const briefing = document.getElementById('proyecto-brief').value;
+
+                const asunto = '📩 Solicitud de presupuesto - Calculadora de Tarifas';
+                const mensaje = `Hola Anna,
+
+He visto tu calculadora de tarifas y me gustaría un presupuesto personalizado.
+
+${clienteNombre ? `Empresa/Nombre: ${clienteNombre}\n` : ''}${clienteEmail ? `Email de contacto: ${clienteEmail}\n` : ''}${briefing ? `\nDetalles del proyecto:\n${briefing}\n` : '\nPor favor, cuéntame más sobre el proyecto que tienes en mente.\n'}
+
+Quedo atento a tus comentarios.
+
+Gracias`;
+
+                window.open(`mailto:${CONTACTO.email}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(mensaje)}`);
+            },
+
+            formatearPrecio(valor) {
+                return valor.toLocaleString('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+            },
+
+            mostrarMensaje(texto, tipo) {
+                const div = document.getElementById('mensaje');
+                div.innerHTML = `<div class="message ${tipo}">${texto}</div>`;
+                setTimeout(() => { div.innerHTML = ''; }, 3000);
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>

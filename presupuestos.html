@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Generador de Presupuestos - Anna Toledo</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --cafe: #3F221B;
+            --verde: #B6D545;
+            --rosa: #FFC4E1;
+            --crema: #F9F7ED;
+            --gris-claro: #F5F3ED;
+            --gris-medio: #E8E5DC;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: var(--crema);
+            color: var(--cafe);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .panel-edicion {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: 100vh;
+            border-right: 2px solid var(--gris-medio);
+        }
+
+        .panel-preview {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            max-height: 100vh;
+            background: white;
+        }
+
+        h1, h2, h3 {
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 1rem;
+        }
+
+        h1 {
+            color: var(--verde);
+            font-size: 2rem;
+        }
+
+        h2 {
+            color: var(--cafe);
+            font-size: 1.3rem;
+            border-bottom: 2px solid var(--verde);
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: var(--cafe);
+            font-size: 1.1rem;
+        }
+
+        .form-group {
+            margin-bottom: 1.2rem;
+        }
+
+        label {
+            display: block;
+            font-weight: 500;
+            margin-bottom: 0.4rem;
+            color: var(--cafe);
+        }
+
+        input[type="text"],
+        input[type="date"],
+        input[type="number"],
+        textarea,
+        select {
+            width: 100%;
+            padding: 0.7rem;
+            border: 1px solid var(--gris-medio);
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+            background-color: white;
+            color: var(--cafe);
+        }
+
+        input:focus,
+        select:focus,
+        textarea:focus {
+            outline: none;
+            border-color: var(--verde);
+            box-shadow: 0 0 0 2px rgba(182, 213, 69, 0.2);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 80px;
+        }
+
+        .checkbox-group {
+            margin-bottom: 1rem;
+        }
+
+        .checkbox-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.6rem;
+            gap: 0.6rem;
+        }
+
+        input[type="checkbox"],
+        input[type="radio"] {
+            cursor: pointer;
+            accent-color: var(--verde);
+            width: 18px;
+            height: 18px;
+        }
+
+        .checkbox-item label {
+            margin: 0;
+            cursor: pointer;
+            flex: 1;
+        }
+
+        button {
+            padding: 0.7rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.95rem;
+        }
+
+        .btn-primary {
+            background-color: var(--verde);
+            color: var(--cafe);
+        }
+
+        .btn-primary:hover {
+            background-color: #A3C42E;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background-color: var(--rosa);
+            color: var(--cafe);
+        }
+
+        .btn-secondary:hover {
+            background-color: #FFB0D6;
+        }
+
+        .btn-danger {
+            background-color: #D9534F;
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background-color: #C9302C;
+        }
+
+        .btn-small {
+            padding: 0.5rem 0.8rem;
+            font-size: 0.85rem;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1.5rem;
+            border-bottom: 2px solid var(--gris-medio);
+        }
+
+        .tab-btn {
+            padding: 0.8rem 1.2rem;
+            background: none;
+            border: none;
+            border-bottom: 3px solid transparent;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--cafe);
+            transition: all 0.3s ease;
+        }
+
+        .tab-btn.active {
+            border-bottom-color: var(--verde);
+            color: var(--verde);
+        }
+
+        .tab-btn:hover {
+            color: var(--verde);
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+
+        th {
+            background-color: var(--verde);
+            color: var(--cafe);
+            padding: 1rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        td {
+            padding: 0.8rem 1rem;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        tr:nth-child(even) {
+            background-color: var(--gris-claro);
+        }
+
+        tr:hover {
+            background-color: #EEE5D9;
+        }
+
+        .card {
+            background: white;
+            border: 1px solid var(--gris-medio);
+            border-radius: 6px;
+            padding: 1.5rem;
+            margin-bottom: 1.2rem;
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.8rem;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        .card-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .message {
+            padding: 1rem;
+            border-radius: 4px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+
+        .message.success {
+            background-color: #D4EDDA;
+            color: #155724;
+            border: 1px solid #C3E6CB;
+        }
+
+        .message.info {
+            background-color: #D1ECF1;
+            color: #0C5460;
+            border: 1px solid #BEE5EB;
+        }
+
+        .document {
+            background: white;
+            padding: 4rem 3rem;
+            page-break-after: avoid;
+            min-height: 297mm;
+        }
+
+        .document-header {
+            text-align: center;
+            border-bottom: 2px solid var(--verde);
+            padding-bottom: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .document-header h1 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1.4rem;
+        }
+
+        .document-header p {
+            margin: 0.2rem 0;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .document-section {
+            margin-bottom: 2rem;
+            page-break-inside: avoid;
+        }
+
+        .document-section h2 {
+            font-size: 1.1rem;
+            border-bottom: 2px solid var(--verde);
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .budget-table {
+            width: 100%;
+            margin: 1.5rem 0;
+        }
+
+        .budget-table th {
+            background-color: var(--verde);
+            color: var(--cafe);
+            padding: 0.8rem;
+            text-align: left;
+            font-weight: 600;
+        }
+
+        .budget-table td {
+            padding: 0.7rem 0.8rem;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        .budget-table tr:nth-child(even) {
+            background-color: var(--gris-claro);
+        }
+
+        .budget-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 0.7rem 0;
+            border-bottom: 1px solid var(--gris-medio);
+        }
+
+        .budget-row.total {
+            font-weight: 600;
+            font-size: 1.1rem;
+            border-top: 2px solid var(--verde);
+            margin-top: 1rem;
+            padding-top: 1rem;
+        }
+
+        .experience-text {
+            font-size: 0.95rem;
+            line-height: 1.6;
+            color: #555;
+        }
+
+        @media (max-width: 1200px) {
+            .container {
+                flex-direction: column;
+            }
+
+            .panel-edicion {
+                border-right: none;
+                border-bottom: 2px solid var(--gris-medio);
+                max-height: none;
+            }
+
+            .panel-preview {
+                max-height: none;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+
+            .container {
+                display: block;
+            }
+
+            .panel-edicion {
+                display: none;
+            }
+
+            .panel-preview {
+                max-height: none;
+                border: none;
+                padding: 0;
+                background: white;
+            }
+
+            .document {
+                padding: 2.5rem 2rem;
+                margin: 0;
+            }
+
+            button, .btn-group {
+                display: none !important;
+            }
+
+            @page {
+                size: A4;
+                margin: 1cm;
+            }
+        }
+
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ============ PANEL DE EDICIÓN ============ -->
+        <div class="panel-edicion">
+            <h1>📋 Generador de Presupuestos</h1>
+
+            <div class="tabs">
+                <button class="tab-btn active" data-tab="nuevo">Nuevo</button>
+                <button class="tab-btn" data-tab="tarifas">Tarifas</button>
+                <button class="tab-btn" data-tab="historial">Historial</button>
+                <button class="tab-btn" data-tab="ajustes">Ajustes</button>
+            </div>
+
+            <!-- TAB: NUEVO PRESUPUESTO -->
+            <div id="nuevo" class="tab-content active">
+                <div id="mensaje-formulario"></div>
+
+                <h2>Datos de la Marca</h2>
+                <div class="form-group">
+                    <label for="marca-nombre">Nombre de la marca *</label>
+                    <input type="text" id="marca-nombre" placeholder="Ej: Nike, Starbucks, etc">
+                </div>
+
+                <div class="form-group">
+                    <label for="marca-contacto">Persona de contacto</label>
+                    <input type="text" id="marca-contacto" placeholder="Ej: Juan García">
+                </div>
+
+                <div class="form-group">
+                    <label for="presupuesto-fecha">Fecha</label>
+                    <input type="date" id="presupuesto-fecha">
+                </div>
+
+                <div class="form-group">
+                    <label for="presupuesto-validez">Validez (días)</label>
+                    <input type="number" id="presupuesto-validez" value="30" min="1">
+                </div>
+
+                <h2>Entregables UGC</h2>
+                <div class="checkbox-group" id="entregables-ugc"></div>
+
+                <h2>Colaboraciones en mi Perfil</h2>
+                <div class="checkbox-group" id="entregables-colabs"></div>
+
+                <h2>Extras</h2>
+                <div class="checkbox-group" id="extras"></div>
+
+                <h2>Licencia de Uso</h2>
+                <div class="form-group">
+                    <label for="licencia">Licencia *</label>
+                    <select id="licencia">
+                        <option value="">-- Elegir --</option>
+                    </select>
+                </div>
+
+                <h2>Exclusividad</h2>
+                <div class="form-group">
+                    <label for="exclusividad">Período</label>
+                    <select id="exclusividad"></select>
+                </div>
+
+                <h2>Notas</h2>
+                <div class="form-group">
+                    <label for="notas">Notas adicionales</label>
+                    <textarea id="notas"></textarea>
+                </div>
+
+                <div class="card" id="resumen-calculos"></div>
+
+                <div class="form-group">
+                    <label>
+                        <input type="checkbox" id="mostrar-iva">
+                        Mostrar desglose IVA
+                    </label>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-primary" onclick="app.generarPresupuesto()">✓ Guardar</button>
+                    <button class="btn-secondary" onclick="app.limpiarFormulario()">🗑️ Limpiar</button>
+                </div>
+            </div>
+
+            <!-- TAB: TARIFAS -->
+            <div id="tarifas" class="tab-content">
+                <h2>Editar Tarifas</h2>
+                <p style="font-size: 0.9rem; color: #666; margin-bottom: 1rem;">Los cambios se guardan automáticamente.</p>
+
+                <h3>UGC</h3>
+                <table id="tabla-tarifas-ugc"></table>
+
+                <h3>Colaboraciones</h3>
+                <table id="tabla-tarifas-colabs"></table>
+
+                <h3>Extras</h3>
+                <table id="tabla-tarifas-extras"></table>
+
+                <h3>Licencias (% recargo)</h3>
+                <table id="tabla-tarifas-licencias"></table>
+
+                <h3>Exclusividad (% recargo)</h3>
+                <table id="tabla-tarifas-exclusividad"></table>
+
+                <div class="btn-group">
+                    <button class="btn-secondary" onclick="app.exportarTarifas()">💾 Exportar</button>
+                    <button class="btn-secondary" onclick="app.importarTarifas()">📂 Importar</button>
+                    <button class="btn-danger btn-small" onclick="app.resetearTarifas()">↻ Restaurar</button>
+                </div>
+                <input type="file" id="archivo-tarifas" accept=".json" style="display: none;">
+            </div>
+
+            <!-- TAB: HISTORIAL -->
+            <div id="historial" class="tab-content">
+                <h2>Presupuestos Guardados</h2>
+                <div id="lista-presupuestos"></div>
+                <div class="btn-group">
+                    <button class="btn-secondary" onclick="app.exportarPresupuestos()">💾 Exportar</button>
+                    <button class="btn-secondary" onclick="app.importarPresupuestos()">📂 Importar</button>
+                </div>
+                <input type="file" id="archivo-presupuestos" accept=".json" style="display: none;">
+            </div>
+
+            <!-- TAB: AJUSTES -->
+            <div id="ajustes" class="tab-content">
+                <h2>Contenido del Presupuesto</h2>
+
+                <h3>Experiencia</h3>
+                <div class="form-group">
+                    <textarea id="ajuste-experiencia"></textarea>
+                </div>
+
+                <h3>Proceso</h3>
+                <div class="form-group">
+                    <textarea id="ajuste-proceso"></textarea>
+                </div>
+
+                <h3>Condiciones</h3>
+                <div class="form-group">
+                    <textarea id="ajuste-condiciones"></textarea>
+                </div>
+
+                <div class="btn-group">
+                    <button class="btn-secondary" onclick="app.guardarAjustes()">💾 Guardar</button>
+                    <button class="btn-danger btn-small" onclick="app.resetearAjustes()">↻ Restaurar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- ============ PANEL DE VISTA PREVIA ============ -->
+        <div class="panel-preview">
+            <div id="contenedor-documento"></div>
+        </div>
+    </div>
+
+    <!-- Botón de impresión flotante -->
+    <div style="position: fixed; bottom: 2rem; right: 2rem; z-index: 1000; display: flex; gap: 0.8rem;">
+        <button class="btn-primary" onclick="window.print()" style="margin: 0;">🖨️ Imprimir PDF</button>
+    </div>
+
+    <script>
+        const CONFIG = {
+            UGC: {
+                'Vídeo testimonio 15-30 s': 100,
+                'Vídeo guionizado 30-60 s': 180,
+                'Pack 3 vídeos guionizados': 450,
+                'Pack 5 vídeos guionizados': 700,
+            },
+            COLABS: {
+                'Reel': 80,
+                'Carrusel/Post': 50,
+                'Set de 3 stories': 30,
+                'Story suelta': 15,
+            },
+            EXTRAS: {
+                'Hook alternativo': 25,
+                'Set de fotos 5-10': 100,
+                'Solo voz en off': 50,
+                'Material en bruto': 30,
+                'Formato adicional 1:1 o 16:9': 25,
+                'Revisión adicional (3ª en adelante)': 30,
+                'Entrega urgente (<72h)': 25,
+            },
+            EXTRAS_TIPOS: {
+                'Entrega urgente (<72h)': 'porcentaje',
+            },
+            LICENCIAS: {
+                'Orgánico 90 días': 0,
+                'Anuncios 30 días': 30,
+                'Anuncios 90 días': 50,
+                'Anuncios 12 meses': 100,
+                'Web/E-commerce/Email 12 meses': 25,
+                'Whitelisting/Spark Ads': 50,
+                'Ilimitado': 150,
+            },
+            EXCLUSIVIDAD: {
+                'Sin exclusividad': 0,
+                '1 mes': 25,
+                '3 meses': 50,
+                '6 meses': 100,
+                '12 meses': 175,
+            },
+            IVA: 0.21,
+            EXPERIENCIA_DEFAULT: `Formación en Comunicación Audiovisual. Especializada en UGC, community management y estrategia de contenido.`,
+            PROCESO_DEFAULT: `Antes: Briefing, anticipo 50%, producto enviado por la marca, guion en 3 días laborables.
+Durante: Grabación y edición en 5-7 días laborables, 2 rondas de cambios incluidas.
+Después: Entrega en MP4 vertical 9:16 sin marca de agua, factura, pago del 50% restante a 14 días.`,
+            CONDICIONES_DEFAULT: `Los precios no incluyen IVA. El contenido se identificará como publicidad. Mantengo los derechos de autor; se concede la licencia contratada. No autorizo entrenar IA. El anticipo no es reembolsable. Sin garantía de ventas.`,
+        };
+
+        const app = {
+            tarifas: null,
+            presupuestos: [],
+            presupuestoActual: null,
+            ajustes: null,
+
+            init() {
+                this.cargarDatos();
+                this.renderizarControles();
+                this.asignarEventos();
+                this.mostrarDocumento();
+            },
+
+            cargarDatos() {
+                this.tarifas = JSON.parse(localStorage.getItem('ugc_tarifas')) || this.getTarifasDefault();
+                this.presupuestos = JSON.parse(localStorage.getItem('ugc_presupuestos')) || [];
+                this.ajustes = JSON.parse(localStorage.getItem('ugc_ajustes')) || this.getAjustesDefault();
+            },
+
+            getTarifasDefault() {
+                return {
+                    ugc: CONFIG.UGC,
+                    colabs: CONFIG.COLABS,
+                    extras: CONFIG.EXTRAS,
+                    extrastipos: CONFIG.EXTRAS_TIPOS,
+                    licencias: CONFIG.LICENCIAS,
+                    exclusividad: CONFIG.EXCLUSIVIDAD,
+                };
+            },
+
+            getAjustesDefault() {
+                return {
+                    experiencia: CONFIG.EXPERIENCIA_DEFAULT,
+                    proceso: CONFIG.PROCESO_DEFAULT,
+                    condiciones: CONFIG.CONDICIONES_DEFAULT,
+                };
+            },
+
+            guardarDatos() {
+                localStorage.setItem('ugc_tarifas', JSON.stringify(this.tarifas));
+                localStorage.setItem('ugc_presupuestos', JSON.stringify(this.presupuestos));
+                localStorage.setItem('ugc_ajustes', JSON.stringify(this.ajustes));
+            },
+
+            renderizarControles() {
+                document.getElementById('presupuesto-fecha').value = new Date().toISOString().split('T')[0];
+
+                const ugcDiv = document.getElementById('entregables-ugc');
+                ugcDiv.innerHTML = '';
+                Object.entries(this.tarifas.ugc).forEach(([nombre, precio]) => {
+                    const id = `ugc_${nombre.replace(/\s+/g, '_')}`;
+                    ugcDiv.innerHTML += `
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="${id}" class="entregable-ugc" data-nombre="${nombre}" data-precio="${precio}">
+                            <label for="${id}">${nombre} (${this.formatearPrecio(precio)})</label>
+                            <input type="number" value="1" min="1" style="width: 60px;" class="cantidad-ugc" data-nombre="${nombre}">
+                        </div>
+                    `;
+                });
+
+                const colabsDiv = document.getElementById('entregables-colabs');
+                colabsDiv.innerHTML = '';
+                Object.entries(this.tarifas.colabs).forEach(([nombre, precio]) => {
+                    const id = `colab_${nombre.replace(/\s+/g, '_')}`;
+                    colabsDiv.innerHTML += `
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="${id}" class="entregable-colab" data-nombre="${nombre}" data-precio="${precio}">
+                            <label for="${id}">${nombre} (${this.formatearPrecio(precio)})</label>
+                            <input type="number" value="1" min="1" style="width: 60px;" class="cantidad-colab" data-nombre="${nombre}">
+                        </div>
+                    `;
+                });
+
+                const extrasDiv = document.getElementById('extras');
+                extrasDiv.innerHTML = '';
+                Object.entries(this.tarifas.extras).forEach(([nombre, precio]) => {
+                    const id = `extra_${nombre.replace(/\s+/g, '_')}`;
+                    const esPorc = this.tarifas.extrastipos[nombre] === 'porcentaje';
+                    extrasDiv.innerHTML += `
+                        <div class="checkbox-item">
+                            <input type="checkbox" id="${id}" class="extra-item" data-nombre="${nombre}" data-precio="${precio}" data-tipo="${esPorc ? 'porcentaje' : 'fijo'}">
+                            <label for="${id}">${nombre} (${esPorc ? '+' + precio + '%' : this.formatearPrecio(precio)})</label>
+                            <input type="number" value="1" min="1" style="width: 60px;" class="cantidad-extra" data-nombre="${nombre}">
+                        </div>
+                    `;
+                });
+
+                const licenseSelect = document.getElementById('licencia');
+                licenseSelect.innerHTML = '<option value="">-- Elegir --</option>';
+                Object.entries(this.tarifas.licencias).forEach(([nombre, porcentaje]) => {
+                    licenseSelect.innerHTML += `<option value="${nombre}">${nombre} (+${porcentaje}%)</option>`;
+                });
+
+                const exclSelect = document.getElementById('exclusividad');
+                exclSelect.innerHTML = '';
+                Object.entries(this.tarifas.exclusividad).forEach(([nombre, porcentaje]) => {
+                    exclSelect.innerHTML += `<option value="${nombre}">${nombre}${porcentaje > 0 ? ' (+' + porcentaje + '%)' : ''}</option>`;
+                });
+
+                document.getElementById('ajuste-experiencia').value = this.ajustes.experiencia;
+                document.getElementById('ajuste-proceso').value = this.ajustes.proceso;
+                document.getElementById('ajuste-condiciones').value = this.ajustes.condiciones;
+
+                this.renderizarTablasEdicion();
+                this.renderizarHistorial();
+            },
+
+            renderizarTablasEdicion() {
+                const tablaUgc = document.getElementById('tabla-tarifas-ugc');
+                tablaUgc.innerHTML = '<thead><tr><th>Servicio</th><th>Precio (€)</th><th>Acción</th></tr></thead>';
+                const tbodyUgc = document.createElement('tbody');
+                Object.entries(this.tarifas.ugc).forEach(([nombre, precio], idx) => {
+                    tbodyUgc.innerHTML += `
+                        <tr>
+                            <td>${nombre}</td>
+                            <td><input type="number" step="10" value="${precio}" data-idx="ugc_${idx}" class="input-tarifa" style="width: 100px;"></td>
+                            <td><button class="btn-danger btn-small" onclick="app.eliminarTarifa('ugc', '${nombre}')">✕</button></td>
+                        </tr>
+                    `;
+                });
+                tablaUgc.appendChild(tbodyUgc);
+
+                const tablaColabs = document.getElementById('tabla-tarifas-colabs');
+                tablaColabs.innerHTML = '<thead><tr><th>Servicio</th><th>Precio (€)</th><th>Acción</th></tr></thead>';
+                const tbodyColabs = document.createElement('tbody');
+                Object.entries(this.tarifas.colabs).forEach(([nombre, precio], idx) => {
+                    tbodyColabs.innerHTML += `
+                        <tr>
+                            <td>${nombre}</td>
+                            <td><input type="number" step="10" value="${precio}" data-idx="colabs_${idx}" class="input-tarifa" style="width: 100px;"></td>
+                            <td><button class="btn-danger btn-small" onclick="app.eliminarTarifa('colabs', '${nombre}')">✕</button></td>
+                        </tr>
+                    `;
+                });
+                tablaColabs.appendChild(tbodyColabs);
+
+                const tablaExtras = document.getElementById('tabla-tarifas-extras');
+                tablaExtras.innerHTML = '<thead><tr><th>Servicio</th><th>Precio</th><th>Tipo</th><th>Acción</th></tr></thead>';
+                const tbodyExtras = document.createElement('tbody');
+                Object.entries(this.tarifas.extras).forEach(([nombre, precio], idx) => {
+                    const tipo = this.tarifas.extrastipos[nombre] || 'fijo';
+                    tbodyExtras.innerHTML += `
+                        <tr>
+                            <td>${nombre}</td>
+                            <td><input type="number" step="5" value="${precio}" data-idx="extras_${idx}" class="input-tarifa" style="width: 80px;"></td>
+                            <td><select data-tipo-idx="extras_${idx}" class="input-tarifa-tipo" style="width: 80px;"><option ${tipo === 'fijo' ? 'selected' : ''}>fijo</option><option ${tipo === 'porcentaje' ? 'selected' : ''}>%</option></select></td>
+                            <td><button class="btn-danger btn-small" onclick="app.eliminarTarifa('extras', '${nombre}')">✕</button></td>
+                        </tr>
+                    `;
+                });
+                tablaExtras.appendChild(tbodyExtras);
+
+                const tablaLicencias = document.getElementById('tabla-tarifas-licencias');
+                tablaLicencias.innerHTML = '<thead><tr><th>Licencia</th><th>Recargo (%)</th><th>Acción</th></tr></thead>';
+                const tbodyLicencias = document.createElement('tbody');
+                Object.entries(this.tarifas.licencias).forEach(([nombre, porc], idx) => {
+                    tbodyLicencias.innerHTML += `
+                        <tr>
+                            <td>${nombre}</td>
+                            <td><input type="number" step="5" value="${porc}" data-idx="licencias_${idx}" class="input-tarifa" style="width: 80px;"></td>
+                            <td><button class="btn-danger btn-small" onclick="app.eliminarTarifa('licencias', '${nombre}')">✕</button></td>
+                        </tr>
+                    `;
+                });
+                tablaLicencias.appendChild(tbodyLicencias);
+
+                const tablaExcl = document.getElementById('tabla-tarifas-exclusividad');
+                tablaExcl.innerHTML = '<thead><tr><th>Período</th><th>Recargo (%)</th><th>Acción</th></tr></thead>';
+                const tbodyExcl = document.createElement('tbody');
+                Object.entries(this.tarifas.exclusividad).forEach(([nombre, porc], idx) => {
+                    tbodyExcl.innerHTML += `
+                        <tr>
+                            <td>${nombre}</td>
+                            <td><input type="number" step="5" value="${porc}" data-idx="exclusividad_${idx}" class="input-tarifa" style="width: 80px;"></td>
+                            <td><button class="btn-danger btn-small" onclick="app.eliminarTarifa('exclusividad', '${nombre}')">✕</button></td>
+                        </tr>
+                    `;
+                });
+                tablaExcl.appendChild(tbodyExcl);
+
+                document.querySelectorAll('.input-tarifa').forEach(inp => {
+                    inp.addEventListener('change', () => this.actualizarTarifa(inp));
+                });
+                document.querySelectorAll('.input-tarifa-tipo').forEach(inp => {
+                    inp.addEventListener('change', () => this.actualizarTarifaTipo(inp));
+                });
+            },
+
+            actualizarTarifa(input) {
+                const idx = input.dataset.idx;
+                const [tipo, num] = idx.split('_');
+                const nuevoValor = parseFloat(input.value);
+                const keys = Object.keys(this.tarifas[tipo]);
+                const clave = keys[parseInt(num)];
+                this.tarifas[tipo][clave] = nuevoValor;
+                this.guardarDatos();
+                this.renderizarControles();
+                this.mostrarDocumento();
+            },
+
+            actualizarTarifaTipo(input) {
+                const idx = input.dataset.tipoIdx;
+                const [tipo, num] = idx.split('_');
+                const nuevoTipo = input.value;
+                const keys = Object.keys(this.tarifas.extras);
+                const clave = keys[parseInt(num)];
+                this.tarifas.extrastipos[clave] = nuevoTipo;
+                this.guardarDatos();
+                this.renderizarControles();
+            },
+
+            eliminarTarifa(tipo, nombre) {
+                if (confirm(`¿Eliminar "${nombre}"?`)) {
+                    delete this.tarifas[tipo][nombre];
+                    if (tipo === 'extras') delete this.tarifas.extrastipos[nombre];
+                    this.guardarDatos();
+                    this.renderizarControles();
+                }
+            },
+
+            renderizarHistorial() {
+                const lista = document.getElementById('lista-presupuestos');
+                if (this.presupuestos.length === 0) {
+                    lista.innerHTML = '<p style="color: #999;">No hay presupuestos guardados.</p>';
+                    return;
+                }
+
+                lista.innerHTML = '';
+                this.presupuestos.forEach((pres, idx) => {
+                    const fecha = new Date(pres.datos.fecha).toLocaleDateString('es-ES');
+                    const card = document.createElement('div');
+                    card.className = 'card';
+                    card.innerHTML = `
+                        <div class="card-header">
+                            <div>
+                                <div class="card-title">${pres.datos.marca}</div>
+                                <small style="color: #999;">${fecha} · ${this.formatearPrecio(pres.total)}</small>
+                            </div>
+                            <div class="btn-group">
+                                <button class="btn-secondary btn-small" onclick="app.cargarPresupuesto(${idx})">👁️</button>
+                                <button class="btn-danger btn-small" onclick="app.borrarPresupuesto(${idx})">✕</button>
+                            </div>
+                        </div>
+                    `;
+                    lista.appendChild(card);
+                });
+            },
+
+            asignarEventos() {
+                document.querySelectorAll('.tab-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+                        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                        btn.classList.add('active');
+                        document.getElementById(btn.dataset.tab).classList.add('active');
+                    });
+                });
+
+                document.getElementById('marca-nombre').addEventListener('change', () => this.mostrarDocumento());
+                document.getElementById('marca-contacto').addEventListener('change', () => this.mostrarDocumento());
+                document.getElementById('presupuesto-fecha').addEventListener('change', () => this.mostrarDocumento());
+                document.getElementById('presupuesto-validez').addEventListener('change', () => this.mostrarDocumento());
+                document.getElementById('licencia').addEventListener('change', () => this.calcularYMostrar());
+                document.getElementById('exclusividad').addEventListener('change', () => this.calcularYMostrar());
+                document.getElementById('notas').addEventListener('change', () => this.mostrarDocumento());
+                document.getElementById('mostrar-iva').addEventListener('change', () => this.mostrarDocumento());
+
+                document.querySelectorAll('.entregable-ugc, .entregable-colab, .extra-item').forEach(chk => {
+                    chk.addEventListener('change', () => this.calcularYMostrar());
+                });
+                document.querySelectorAll('.cantidad-ugc, .cantidad-colab, .cantidad-extra').forEach(inp => {
+                    inp.addEventListener('change', () => this.calcularYMostrar());
+                });
+
+                document.getElementById('archivo-tarifas').addEventListener('change', (e) => this.cargarTarifasDesdeArchivo(e));
+                document.getElementById('archivo-presupuestos').addEventListener('change', (e) => this.cargarPresupuestosDesdeArchivo(e));
+            },
+
+            calcularYMostrar() {
+                this.calcularPresupuesto();
+                this.mostrarDocumento();
+            },
+
+            calcularPresupuesto() {
+                const presupuesto = {
+                    lineas: [],
+                    subtotal: 0,
+                    recargoLicencia: 0,
+                    recargoExclusividad: 0,
+                    total: 0,
+                };
+
+                const lineasSinExtrasPorc = [];
+                let subtotalSinExtrasPorc = 0;
+
+                document.querySelectorAll('.entregable-ugc:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-ugc').value) || 1;
+                    const subtotal = precio * cantidad;
+                    subtotalSinExtrasPorc += subtotal;
+                    lineasSinExtrasPorc.push({ nombre, precio, cantidad, subtotal, tipo: 'UGC' });
+                });
+
+                document.querySelectorAll('.entregable-colab:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-colab').value) || 1;
+                    const subtotal = precio * cantidad;
+                    subtotalSinExtrasPorc += subtotal;
+                    lineasSinExtrasPorc.push({ nombre, precio, cantidad, subtotal, tipo: 'Colaboración' });
+                });
+
+                // Extras fijos primero
+                document.querySelectorAll('.extra-item:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const tipo = chk.dataset.tipo;
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-extra').value) || 1;
+
+                    if (tipo !== 'porcentaje') {
+                        const subtotal = precio * cantidad;
+                        subtotalSinExtrasPorc += subtotal;
+                        lineasSinExtrasPorc.push({ nombre, precio, cantidad, subtotal, tipo: 'Extra' });
+                    }
+                });
+
+                presupuesto.lineas = lineasSinExtrasPorc;
+                presupuesto.subtotal = subtotalSinExtrasPorc;
+
+                // Ahora aplicar extras porcentaje sobre el total
+                document.querySelectorAll('.extra-item:checked').forEach(chk => {
+                    const nombre = chk.dataset.nombre;
+                    const precio = parseFloat(chk.dataset.precio);
+                    const tipo = chk.dataset.tipo;
+                    const cantidad = parseInt(chk.parentElement.querySelector('.cantidad-extra').value) || 1;
+
+                    if (tipo === 'porcentaje') {
+                        const recargoExtra = (subtotalSinExtrasPorc * precio / 100) * cantidad;
+                        presupuesto.lineas.push({ nombre, precio, cantidad, subtotal: recargoExtra, tipo: 'Extra (%)', esPorc: true });
+                        presupuesto.subtotal += recargoExtra;
+                    }
+                });
+
+                const licencia = document.getElementById('licencia').value;
+                if (licencia && this.tarifas.licencias[licencia] !== undefined) {
+                    presupuesto.recargoLicencia = presupuesto.subtotal * this.tarifas.licencias[licencia] / 100;
+                }
+
+                const exclusividad = document.getElementById('exclusividad').value;
+                if (exclusividad && this.tarifas.exclusividad[exclusividad] !== undefined) {
+                    presupuesto.recargoExclusividad = presupuesto.subtotal * this.tarifas.exclusividad[exclusividad] / 100;
+                }
+
+                presupuesto.total = presupuesto.subtotal + presupuesto.recargoLicencia + presupuesto.recargoExclusividad;
+                presupuesto.iva = presupuesto.total * CONFIG.IVA;
+
+                this.presupuestoActual = presupuesto;
+                this.mostrarResumen();
+            },
+
+            mostrarResumen() {
+                const div = document.getElementById('resumen-calculos');
+                const p = this.presupuestoActual;
+
+                if (p.lineas.length === 0) {
+                    div.innerHTML = '<p style="color: #999; text-align: center;">Selecciona entregables</p>';
+                    return;
+                }
+
+                let html = '<table class="budget-table"><tbody>';
+                p.lineas.forEach(l => {
+                    if (l.cantidad > 1) {
+                        html += `<tr><td>${l.nombre} (x${l.cantidad})</td><td style="text-align: right;">${this.formatearPrecio(l.subtotal)}</td></tr>`;
+                    } else {
+                        html += `<tr><td>${l.nombre}</td><td style="text-align: right;">${this.formatearPrecio(l.subtotal)}</td></tr>`;
+                    }
+                });
+                html += '</tbody></table>';
+                html += '<div class="budget-row subtotal"><span>Subtotal</span><span>' + this.formatearPrecio(p.subtotal) + '</span></div>';
+                if (p.recargoLicencia > 0) html += '<div class="budget-row subtotal"><span>Recargo licencia</span><span>+' + this.formatearPrecio(p.recargoLicencia) + '</span></div>';
+                if (p.recargoExclusividad > 0) html += '<div class="budget-row subtotal"><span>Recargo exclusividad</span><span>+' + this.formatearPrecio(p.recargoExclusividad) + '</span></div>';
+                html += '<div class="budget-row total"><span>TOTAL SIN IVA</span><span>' + this.formatearPrecio(p.total) + '</span></div>';
+                if (document.getElementById('mostrar-iva').checked) {
+                    html += '<div class="budget-row subtotal"><span>IVA 21%</span><span>' + this.formatearPrecio(p.iva) + '</span></div>';
+                }
+                div.innerHTML = html;
+            },
+
+            mostrarDocumento() {
+                if (!this.presupuestoActual || this.presupuestoActual.lineas.length === 0) {
+                    document.getElementById('contenedor-documento').innerHTML = '<p style="color: #999; text-align: center; padding: 2rem;">Selecciona entregables</p>';
+                    return;
+                }
+
+                const p = this.presupuestoActual;
+                const marca = document.getElementById('marca-nombre').value || 'Presupuesto';
+                const contacto = document.getElementById('marca-contacto').value;
+                const fecha = new Date(document.getElementById('presupuesto-fecha').value);
+                const validez = parseInt(document.getElementById('presupuesto-validez').value) || 30;
+                const validezFecha = new Date(fecha);
+                validezFecha.setDate(validezFecha.getDate() + validez);
+                const notas = document.getElementById('notas').value;
+                const mostrarIva = document.getElementById('mostrar-iva').checked;
+
+                const fechaFmt = fecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+                const validezFmt = validezFecha.toLocaleDateString('es-ES', { year: 'numeric', month: 'long', day: 'numeric' });
+
+                let html = `
+                    <div class="document">
+                        <div class="document-header">
+                            <h1>PRESUPUESTO</h1>
+                            <p><strong>${marca}</strong></p>
+                            ${contacto ? `<p>Contacto: ${contacto}</p>` : ''}
+                            <p>${fechaFmt}</p>
+                        </div>
+
+                        <div class="document-section">
+                            <h2>Anna Toledo</h2>
+                            <p><strong>creadora de contenido | community manager</strong></p>
+                            <p>annatoledo.es · @by.annatoledo · Eibar, Euskadi</p>
+                        </div>
+
+                        <div class="document-section">
+                            <h2>Experiencia</h2>
+                            <p class="experience-text">${this.ajustes.experiencia}</p>
+                        </div>
+
+                        <div class="document-section">
+                            <h2>Desglose</h2>
+                            <table class="budget-table">
+                                <thead>
+                                    <tr>
+                                        <th>Servicio</th>
+                                        <th style="text-align: right;">Cantidad</th>
+                                        <th style="text-align: right;">Precio Unitario</th>
+                                        <th style="text-align: right;">Subtotal</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                `;
+
+                p.lineas.forEach(l => {
+                    const precioUnit = l.esPorc ? `+${l.precio}%` : this.formatearPrecio(l.precio);
+                    html += `<tr><td>${l.nombre}</td><td style="text-align: right;">${l.cantidad}</td><td style="text-align: right;">${precioUnit}</td><td style="text-align: right; font-weight: 500;">${this.formatearPrecio(l.subtotal)}</td></tr>`;
+                });
+
+                html += `</tbody></table><div style="margin-top: 1.5rem;">`;
+                html += '<div class="budget-row"><span>Subtotal</span><span>' + this.formatearPrecio(p.subtotal) + '</span></div>';
+                if (p.recargoLicencia > 0) {
+                    const licencia = document.getElementById('licencia').value;
+                    html += `<div class="budget-row"><span>Recargo ${licencia.toLowerCase()}</span><span>+${this.formatearPrecio(p.recargoLicencia)}</span></div>`;
+                }
+                if (p.recargoExclusividad > 0) {
+                    const exclusividad = document.getElementById('exclusividad').value;
+                    html += `<div class="budget-row"><span>Recargo ${exclusividad.toLowerCase()}</span><span>+${this.formatearPrecio(p.recargoExclusividad)}</span></div>`;
+                }
+                html += '<div class="budget-row total"><span>TOTAL SIN IVA</span><span>' + this.formatearPrecio(p.total) + '</span></div>';
+                if (mostrarIva) {
+                    html += `<div class="budget-row"><span>IVA (21%)</span><span>+${this.formatearPrecio(p.iva)}</span></div>`;
+                    html += '<div class="budget-row total"><span>TOTAL CON IVA</span><span>' + this.formatearPrecio(p.total + p.iva) + '</span></div>';
+                }
+                html += '</div></div>';
+
+                html += '<div class="document-section"><h2>Proceso</h2><p class="experience-text">' + this.ajustes.proceso.split('\n').join('<br>') + '</p></div>';
+                html += '<div class="document-section"><h2>Condiciones</h2><p class="experience-text">' + this.ajustes.condiciones + '</p></div>';
+                if (notas) html += `<div class="document-section"><h2>Notas</h2><p class="experience-text">${notas}</p></div>`;
+                html += `<div class="document-section"><p style="font-size: 0.9rem; color: #999;">Válido hasta <strong>${validezFmt}</strong></p></div></div>`;
+
+                document.getElementById('contenedor-documento').innerHTML = html;
+            },
+
+            generarPresupuesto() {
+                const marca = document.getElementById('marca-nombre').value;
+                if (!marca || !this.presupuestoActual || this.presupuestoActual.lineas.length === 0) {
+                    this.mostrarMensaje('Completa los datos y selecciona entregables', 'error');
+                    return;
+                }
+
+                const presupuesto = {
+                    id: Date.now(),
+                    datos: {
+                        marca: document.getElementById('marca-nombre').value,
+                        contacto: document.getElementById('marca-contacto').value,
+                        fecha: document.getElementById('presupuesto-fecha').value,
+                        validez: parseInt(document.getElementById('presupuesto-validez').value),
+                        notas: document.getElementById('notas').value,
+                    },
+                    presupuesto: { ...this.presupuestoActual },
+                    total: this.presupuestoActual.total,
+                };
+
+                this.presupuestos.push(presupuesto);
+                this.guardarDatos();
+                this.renderizarHistorial();
+                this.mostrarMensaje(`✓ Presupuesto guardado: ${marca}`, 'success');
+            },
+
+            cargarPresupuesto(idx) {
+                const pres = this.presupuestos[idx];
+                document.getElementById('marca-nombre').value = pres.datos.marca;
+                document.getElementById('marca-contacto').value = pres.datos.contacto;
+                document.getElementById('presupuesto-fecha').value = pres.datos.fecha;
+                document.getElementById('presupuesto-validez').value = pres.datos.validez;
+                document.getElementById('notas').value = pres.datos.notas;
+                this.mostrarMensaje('Presupuesto cargado', 'info');
+            },
+
+            borrarPresupuesto(idx) {
+                if (confirm('¿Eliminar?')) {
+                    this.presupuestos.splice(idx, 1);
+                    this.guardarDatos();
+                    this.renderizarHistorial();
+                }
+            },
+
+            guardarAjustes() {
+                this.ajustes = {
+                    experiencia: document.getElementById('ajuste-experiencia').value,
+                    proceso: document.getElementById('ajuste-proceso').value,
+                    condiciones: document.getElementById('ajuste-condiciones').value,
+                };
+                this.guardarDatos();
+                this.mostrarDocumento();
+                this.mostrarMensaje('✓ Guardado', 'success');
+            },
+
+            resetearAjustes() {
+                if (confirm('¿Restaurar predeterminados?')) {
+                    this.ajustes = this.getAjustesDefault();
+                    this.guardarDatos();
+                    this.renderizarControles();
+                    this.mostrarMensaje('Restaurado', 'success');
+                }
+            },
+
+            exportarTarifas() {
+                const json = JSON.stringify(this.tarifas, null, 2);
+                this.descargarJSON(json, `tarifas-${new Date().toISOString().split('T')[0]}.json`);
+            },
+
+            importarTarifas() {
+                document.getElementById('archivo-tarifas').click();
+            },
+
+            cargarTarifasDesdeArchivo(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        this.tarifas = JSON.parse(ev.target.result);
+                        this.guardarDatos();
+                        this.renderizarControles();
+                        this.mostrarMensaje('✓ Tarifas importadas', 'success');
+                    } catch {
+                        this.mostrarMensaje('Error al importar', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            exportarPresupuestos() {
+                const json = JSON.stringify(this.presupuestos, null, 2);
+                this.descargarJSON(json, `presupuestos-${new Date().toISOString().split('T')[0]}.json`);
+            },
+
+            importarPresupuestos() {
+                document.getElementById('archivo-presupuestos').click();
+            },
+
+            cargarPresupuestosDesdeArchivo(e) {
+                const file = e.target.files[0];
+                if (!file) return;
+                const reader = new FileReader();
+                reader.onload = (ev) => {
+                    try {
+                        this.presupuestos = JSON.parse(ev.target.result);
+                        this.guardarDatos();
+                        this.renderizarHistorial();
+                        this.mostrarMensaje('✓ Presupuestos importados', 'success');
+                    } catch {
+                        this.mostrarMensaje('Error al importar', 'error');
+                    }
+                };
+                reader.readAsText(file);
+            },
+
+            limpiarFormulario() {
+                if (confirm('¿Limpiar?')) {
+                    document.getElementById('marca-nombre').value = '';
+                    document.getElementById('marca-contacto').value = '';
+                    document.getElementById('presupuesto-fecha').value = new Date().toISOString().split('T')[0];
+                    document.getElementById('presupuesto-validez').value = '30';
+                    document.getElementById('licencia').value = '';
+                    document.getElementById('exclusividad').value = 'Sin exclusividad';
+                    document.getElementById('notas').value = '';
+                    document.getElementById('mostrar-iva').checked = false;
+                    document.querySelectorAll('input[type="checkbox"]').forEach(chk => { chk.checked = false; });
+                    this.presupuestoActual = { lineas: [], subtotal: 0, recargoLicencia: 0, recargoExclusividad: 0, total: 0 };
+                    this.mostrarResumen();
+                    this.mostrarDocumento();
+                }
+            },
+
+            resetearTarifas() {
+                if (confirm('¿Restaurar tarifas predeterminadas?')) {
+                    this.tarifas = this.getTarifasDefault();
+                    this.guardarDatos();
+                    this.renderizarControles();
+                }
+            },
+
+            descargarJSON(json, nombre) {
+                const blob = new Blob([json], { type: 'application/json' });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = nombre;
+                a.click();
+                URL.revokeObjectURL(url);
+            },
+
+            formatearPrecio(valor) {
+                return valor.toLocaleString('es-ES', { style: 'currency', currency: 'EUR', minimumFractionDigits: 0, maximumFractionDigits: 2 });
+            },
+
+            mostrarMensaje(texto, tipo) {
+                const div = document.getElementById('mensaje-formulario');
+                div.innerHTML = `<div class="message ${tipo}">${texto}</div>`;
+                setTimeout(() => { div.innerHTML = ''; }, 3000);
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
