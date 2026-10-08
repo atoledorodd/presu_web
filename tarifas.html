@@ -802,17 +802,12 @@
                 docHtml += '</div>';
                 docHtml += '</div>';
 
-                if (timeline || presupuestoRef) {
+                if (timeline || presupuestoRef || notas) {
                     docHtml += '<div class="document-section">';
-                    if (timeline) docHtml += `<p style="font-size: 0.9rem;"><strong>Timeline:</strong> ${timeline}</p>`;
-                    if (presupuestoRef) docHtml += `<p style="font-size: 0.9rem;"><strong>Presupuesto referencia:</strong> ${presupuestoRef}</p>`;
-                    docHtml += '</div>';
-                }
-
-                if (notas) {
-                    docHtml += '<div class="document-section">';
-                    docHtml += '<h2>Notas del Proyecto</h2>';
-                    docHtml += `<p style="font-size: 0.9rem; line-height: 1.6;">${notas.replace(/\n/g, '<br>')}</p>`;
+                    docHtml += '<h2>Detalles Adicionales</h2>';
+                    if (timeline) docHtml += `<p style="font-size: 0.9rem; margin: 0.5rem 0;"><strong>⏱️ Timeline:</strong> ${timeline}</p>`;
+                    if (presupuestoRef) docHtml += `<p style="font-size: 0.9rem; margin: 0.5rem 0;"><strong>💰 Presupuesto referencia:</strong> ${presupuestoRef}</p>`;
+                    if (notas) docHtml += `<p style="font-size: 0.9rem; margin: 0.5rem 0;"><strong>📝 Notas:</strong><br>${notas.replace(/\n/g, '<br>')}</p>`;
                     docHtml += '</div>';
                 }
 
