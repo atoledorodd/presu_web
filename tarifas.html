@@ -637,6 +637,15 @@
                 });
                 document.getElementById('licencia').addEventListener('change', () => this.calcularYMostrar());
                 document.getElementById('exclusividad').addEventListener('change', () => this.calcularYMostrar());
+
+                // Event listeners para detalles del proyecto
+                document.getElementById('cliente-nombre').addEventListener('change', () => this.mostrarVista());
+                document.getElementById('cliente-email').addEventListener('change', () => this.mostrarVista());
+                document.getElementById('cliente-telefono').addEventListener('change', () => this.mostrarVista());
+                document.getElementById('proyecto-brief').addEventListener('change', () => this.mostrarVista());
+                document.getElementById('proyecto-timeline').addEventListener('change', () => this.mostrarVista());
+                document.getElementById('proyecto-presupuesto').addEventListener('change', () => this.mostrarVista());
+                document.getElementById('proyecto-notas').addEventListener('change', () => this.mostrarVista());
             },
 
             calcularYMostrar() {
