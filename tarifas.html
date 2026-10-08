@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Tarifas UGC - Anna Toledo</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/build/email.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -832,22 +834,60 @@
             },
 
             contactar() {
-                const clienteNombre = document.getElementById('cliente-nombre').value;
+                if (!this.presupuesto || this.presupuesto.lineas.length === 0) {
+                    this.mostrarMensaje('Selecciona servicios primero', 'error');
+                    return;
+                }
+
+                this.mostrarMensaje('Generando PDF y enviando...', 'info');
+
+                const clienteNombre = document.getElementById('cliente-nombre').value || 'Cliente';
                 const clienteEmail = document.getElementById('cliente-email').value;
                 const briefing = document.getElementById('proyecto-brief').value;
+                const timeline = document.getElementById('proyecto-timeline').value;
+                const presupuestoRef = document.getElementById('proyecto-presupuesto').value;
+                const notas = document.getElementById('proyecto-notas').value;
 
+                // Generar PDF del documento
+                const elemento = document.getElementById('documento-preview');
+                const opt = {
+                    margin: 10,
+                    filename: `Estimado-${clienteNombre.replace(/\s+/g, '_')}-${new Date().toISOString().split('T')[0]}.pdf`,
+                    image: { type: 'jpeg', quality: 0.98 },
+                    html2canvas: { scale: 2 },
+                    jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
+                };
+
+                html2pdf().set(opt).from(elemento).toPdf().output('dataurlstring').then(pdfData => {
+                    // Enviar email con EmailJS
+                    emailjs.init('MwEwTTm9dBL-nVrZj');
+
+                    const templateParams = {
+                        to_email: 'anna.tol.rod@gmail.com',
+                        from_email: clienteEmail || 'noespecificado@gmail.com',
+                        cliente_nombre: clienteNombre,
+                        cliente_email: clienteEmail || 'No especificado',
+                        timeline: timeline || 'No especificado',
+                        presupuesto_ref: presupuestoRef || 'No especificado',
+                        message: `Nueva solicitud de presupuesto desde la calculadora de tarifas.\n\n${notas ? `Notas adicionales: ${notas}` : ''}`
+                    };
+
+                    emailjs.send('service_tarifas_ugc', 'template_tarifas_ugc', templateParams)
+                        .then(() => {
+                            this.mostrarMensaje('✅ Email enviado a Anna. ¡Nos ponemos en contacto pronto!', 'success');
+                        })
+                        .catch((err) => {
+                            console.error('Error enviando email:', err);
+                            this.mostrarMensaje('Email no pudo ser enviado. Intenta con el botón alternativo.', 'error');
+                            this.contactarPorGmail(clienteNombre, clienteEmail, briefing);
+                        });
+                });
+            },
+
+            contactarPorGmail(nombre, email, briefing) {
                 const asunto = '📩 Solicitud de presupuesto - Calculadora de Tarifas';
-                const mensaje = `Hola Anna,
-
-He visto tu calculadora de tarifas y me gustaría un presupuesto personalizado.
-
-${clienteNombre ? `Empresa/Nombre: ${clienteNombre}\n` : ''}${clienteEmail ? `Email de contacto: ${clienteEmail}\n` : ''}${briefing ? `\nDetalles del proyecto:\n${briefing}\n` : '\nPor favor, cuéntame más sobre el proyecto que tienes en mente.\n'}
-
-Quedo atento a tus comentarios.
-
-Gracias`;
-
-                window.open(`mailto:${CONTACTO.email}?subject=${encodeURIComponent(asunto)}&body=${encodeURIComponent(mensaje)}`);
+                const mensaje = `Hola Anna,\n\nHe usado tu calculadora de tarifas y me gustaría un presupuesto personalizado.\n\n${nombre ? `Empresa/Nombre: ${nombre}\n` : ''}${email ? `Email de contacto: ${email}\n` : ''}${briefing ? `\nDetalles del proyecto:\n${briefing}\n` : ''}Quedo atento a tus comentarios.\n\nGracias`;
+                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=anna.tol.rod@gmail.com&su=${encodeURIComponent(asunto)}&body=${encodeURIComponent(mensaje)}`, '_blank');
             },
 
             formatearPrecio(valor) {
