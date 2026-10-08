@@ -839,55 +839,34 @@
                     return;
                 }
 
-                this.mostrarMensaje('Generando PDF y enviando...', 'info');
+                this.mostrarMensaje('Generando PDF...', 'info');
 
                 const clienteNombre = document.getElementById('cliente-nombre').value || 'Cliente';
                 const clienteEmail = document.getElementById('cliente-email').value;
                 const briefing = document.getElementById('proyecto-brief').value;
-                const timeline = document.getElementById('proyecto-timeline').value;
-                const presupuestoRef = document.getElementById('proyecto-presupuesto').value;
-                const notas = document.getElementById('proyecto-notas').value;
 
-                // Generar PDF del documento
                 const elemento = document.getElementById('documento-preview');
+                const nombreArchivo = `Estimado-${clienteNombre.replace(/\s+/g, '_')}-${new Date().toISOString().split('T')[0]}.pdf`;
+
                 const opt = {
                     margin: 10,
-                    filename: `Estimado-${clienteNombre.replace(/\s+/g, '_')}-${new Date().toISOString().split('T')[0]}.pdf`,
+                    filename: nombreArchivo,
                     image: { type: 'jpeg', quality: 0.98 },
                     html2canvas: { scale: 2 },
                     jsPDF: { orientation: 'portrait', unit: 'mm', format: 'a4' }
                 };
 
-                html2pdf().set(opt).from(elemento).toPdf().output('dataurlstring').then(pdfData => {
-                    // Enviar email con EmailJS
-                    emailjs.init('MwEwTTm9dBL-nVrZj');
+                // Descargar PDF
+                html2pdf().set(opt).from(elemento).save();
 
-                    const templateParams = {
-                        to_email: 'anna.tol.rod@gmail.com',
-                        from_email: clienteEmail || 'noespecificado@gmail.com',
-                        cliente_nombre: clienteNombre,
-                        cliente_email: clienteEmail || 'No especificado',
-                        timeline: timeline || 'No especificado',
-                        presupuesto_ref: presupuestoRef || 'No especificado',
-                        message: `Nueva solicitud de presupuesto desde la calculadora de tarifas.\n\n${notas ? `Notas adicionales: ${notas}` : ''}`
-                    };
+                // Abrir Gmail después de descargar
+                setTimeout(() => {
+                    const asunto = 'Presupuesto UGC - ' + clienteNombre;
+                    const mensaje = `Hola Anna,\n\nTe adjunto el estimado de presupuesto desde tu calculadora de tarifas.\n\nDatos del cliente:\n- Nombre/Empresa: ${clienteNombre}\n- Email: ${clienteEmail || 'No especificado'}\n\n${briefing ? `Detalles:\n${briefing}\n` : ''}Quedo atento a tus comentarios.\n\nGracias`;
 
-                    emailjs.send('service_tarifas_ugc', 'template_tarifas_ugc', templateParams)
-                        .then(() => {
-                            this.mostrarMensaje('✅ Email enviado a Anna. ¡Nos ponemos en contacto pronto!', 'success');
-                        })
-                        .catch((err) => {
-                            console.error('Error enviando email:', err);
-                            this.mostrarMensaje('Email no pudo ser enviado. Intenta con el botón alternativo.', 'error');
-                            this.contactarPorGmail(clienteNombre, clienteEmail, briefing);
-                        });
-                });
-            },
-
-            contactarPorGmail(nombre, email, briefing) {
-                const asunto = '📩 Solicitud de presupuesto - Calculadora de Tarifas';
-                const mensaje = `Hola Anna,\n\nHe usado tu calculadora de tarifas y me gustaría un presupuesto personalizado.\n\n${nombre ? `Empresa/Nombre: ${nombre}\n` : ''}${email ? `Email de contacto: ${email}\n` : ''}${briefing ? `\nDetalles del proyecto:\n${briefing}\n` : ''}Quedo atento a tus comentarios.\n\nGracias`;
-                window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=anna.tol.rod@gmail.com&su=${encodeURIComponent(asunto)}&body=${encodeURIComponent(mensaje)}`, '_blank');
+                    window.open(`https://mail.google.com/mail/?view=cm&fs=1&to=anna.tol.rod@gmail.com&su=${encodeURIComponent(asunto)}&body=${encodeURIComponent(mensaje)}`, '_blank');
+                    this.mostrarMensaje('✅ PDF descargado. Gmail abierto → adjunta el PDF y envía', 'success');
+                }, 800);
             },
 
             formatearPrecio(valor) {
